@@ -3,11 +3,9 @@ import re
 
 class ChapterReader:
     @staticmethod
-    def split_by_chapter(file_path: str) -> list[str]:
-        with open(file_path, 'r') as file:
-            text = file.read()
-            chapters = re.split(r'\n\n\nchapter', text, flags=re.IGNORECASE)[1:]
-            return chapters
+    def split_by_chapter(text: str) -> list[str]:
+        chapters = re.split(r'\n\n\nchapter', text, flags=re.IGNORECASE)[1:]
+        return chapters
 
     @staticmethod
     def split_by_paragraph(text: str) -> list[str]:

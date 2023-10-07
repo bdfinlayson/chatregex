@@ -1,6 +1,7 @@
 import pytest
 
 from src.chatregex.pipeline.chapter_reader import ChapterReader
+from tests import read_file
 
 
 @pytest.mark.parametrize(
@@ -13,8 +14,10 @@ from src.chatregex.pipeline.chapter_reader import ChapterReader
 )
 def test_split_by_chapter(file_path, expected_number_of_chapters):
     # given
+    text = read_file(file_path)
+
     # when
-    chapters = ChapterReader.split_by_chapter(file_path)
+    chapters = ChapterReader.split_by_chapter(text)
 
     # then
     assert len(chapters) == expected_number_of_chapters
@@ -30,8 +33,10 @@ def test_split_by_chapter(file_path, expected_number_of_chapters):
 )
 def test_split_by_paragraph(file_path, expected_number_of_chapter_paragraphs):
     # given
+    text = read_file(file_path)
+
     # when
-    chapters = ChapterReader.split_by_chapter(file_path)
+    chapters = ChapterReader.split_by_chapter(text)
 
     # then
     assert len(ChapterReader.split_by_paragraph(chapters[0])) == expected_number_of_chapter_paragraphs[0]
@@ -47,8 +52,10 @@ def test_split_by_paragraph(file_path, expected_number_of_chapter_paragraphs):
 )
 def test_split_by_sentence(file_path, expected_number_of_chapter_sentences):
     # given
+    text = read_file(file_path)
+
     # when
-    chapters = ChapterReader.split_by_chapter(file_path)
+    chapters = ChapterReader.split_by_chapter(text)
     paragraphs = ChapterReader.split_by_paragraph(chapters[0])
 
     # then

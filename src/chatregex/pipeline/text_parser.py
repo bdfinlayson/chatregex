@@ -7,11 +7,19 @@ from re import Pattern
 
 class TextParser:
     @staticmethod
-    def find_occurrences(pattern: Pattern, file_path: str) -> Dict[int, Dict[str, Union[str, int]]]:
+    def remove_titles(text: str):
+        pattern = re.compile(r'dr\.|st\.|mr\.|mrs\.|ms\.|\s\w\.', flags=re.IGNORECASE)
+        text = re.sub(pattern, '', text)
+        text = re.sub(r'  ', ' ', text)
+        text = text.strip()
+        return text
+
+    @staticmethod
+    def find_occurrences(pattern: Pattern, text: str) -> Dict[int, Dict[str, Union[str, int]]]:
         occurence_n = 0
         occurrences = {}
 
-        chapters = ChapterReader.split_by_chapter(file_path)
+        chapters = ChapterReader.split_by_chapter(text)
 
         for idx, chapter in enumerate(chapters):
             chapter_n = idx + 1
