@@ -13,10 +13,8 @@ from src.chatregex.pipeline.chapter_reader import ChapterReader
 )
 def test_split_by_chapter(file_path, expected_number_of_chapters):
     # given
-    chapter_reader = ChapterReader()
-
     # when
-    chapters = chapter_reader.split_by_chapter(file_path)
+    chapters = ChapterReader.split_by_chapter(file_path)
 
     # then
     assert len(chapters) == expected_number_of_chapters
@@ -32,13 +30,11 @@ def test_split_by_chapter(file_path, expected_number_of_chapters):
 )
 def test_split_by_paragraph(file_path, expected_number_of_chapter_paragraphs):
     # given
-    chapter_reader = ChapterReader()
-
     # when
-    chapters = chapter_reader.split_by_chapter(file_path)
+    chapters = ChapterReader.split_by_chapter(file_path)
 
     # then
-    assert len(chapter_reader.split_by_paragraph(chapters[0])) == expected_number_of_chapter_paragraphs[0]
+    assert len(ChapterReader.split_by_paragraph(chapters[0])) == expected_number_of_chapter_paragraphs[0]
 
 
 @pytest.mark.parametrize(
@@ -51,12 +47,10 @@ def test_split_by_paragraph(file_path, expected_number_of_chapter_paragraphs):
 )
 def test_split_by_sentence(file_path, expected_number_of_chapter_sentences):
     # given
-    chapter_reader = ChapterReader()
-
     # when
-    chapters = chapter_reader.split_by_chapter(file_path)
-    paragraphs = chapter_reader.split_by_paragraph(chapters[0])
+    chapters = ChapterReader.split_by_chapter(file_path)
+    paragraphs = ChapterReader.split_by_paragraph(chapters[0])
 
     # then
-    assert len(chapter_reader.split_by_sentence(paragraphs[1])) == expected_number_of_chapter_sentences[0]
+    assert len(ChapterReader.split_by_sentence(paragraphs[1])) == expected_number_of_chapter_sentences[0]
 
