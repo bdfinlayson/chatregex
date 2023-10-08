@@ -4,7 +4,8 @@ from src.chatregex.pipeline import a_study_in_scarlet, the_secret_adversary, the
 import pytest
 
 from src.chatregex.pipeline.text_parser import TextParser
-from tests import read_file
+from tests import read_file, a_study_in_scarlet_path
+
 
 @pytest.mark.parametrize('text, expected',
                          [
@@ -21,7 +22,7 @@ def test_remove_titles(text, expected):
 @pytest.mark.parametrize('file_path, pattern, expected_chapter_n, expected_sentence_n, expected_sentence, expected_match',
                          [
                             # ('./stubs/a_study_in_scarlet.txt', a_study_in_scarlet['investigator_pattern'], 1, 1, '', 'Sherlock Holmes'),
-                            ('./stubs/a_study_in_scarlet.txt', a_study_in_scarlet['crime_pattern'], 1, 1, '', 'Sherlock Holmes'),
+                            (a_study_in_scarlet_path, a_study_in_scarlet['crime_pattern'], 1, 1, '', 'Sherlock Holmes'),
                             # ('./stubs/the_sign_of_four.txt', the_sign_of_four['investigator_pattern'], 1, 1, '', ''),
                             # ('./stubs/the_secret_adversary.txt', the_secret_adversary['investigator_pattern'], 1, 1, '', '')
                          ])

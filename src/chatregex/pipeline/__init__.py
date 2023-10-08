@@ -1,12 +1,11 @@
 import re
 
-from src.chatregex.pipeline.preprocessor import Preprocessor
 
 a_study_in_scarlet = {
     'investigator_pattern': re.compile(r'sherlock holmes|sherlock|holmes|mr\. sherlock holmes', flags=re.IGNORECASE),
-    'crime_pattern': re.compile(r'enoch|drebber|marks of blood|rache', flags=re.IGNORECASE),
-    'perpetrator_pattern': re.compile(r'', flags=re.IGNORECASE),
-    'suspects_pattern': re.compile(r'', flags=re.IGNORECASE)
+    'crime_pattern': re.compile(r'drebber', flags=re.IGNORECASE),
+    'perpetrator_pattern': re.compile(r'jefferson hope', flags=re.IGNORECASE),
+    'suspects_pattern': re.compile(r'elias openshaw|arthur charpentier|joseph stangerson', flags=re.IGNORECASE)
 }
 
 the_secret_adversary = {
@@ -21,4 +20,11 @@ the_sign_of_four = {
     'crime_pattern': re.compile(r'', flags=re.IGNORECASE),
     'perpetrator_pattern': re.compile(r'', flags=re.IGNORECASE),
     'suspects_pattern': re.compile(r'', flags=re.IGNORECASE)
+}
+
+
+book_patterns = {
+    'a_study_in_scarlet': a_study_in_scarlet,
+    'the_secret_adversary': the_secret_adversary,
+    'the_sign_of_four': the_sign_of_four
 }

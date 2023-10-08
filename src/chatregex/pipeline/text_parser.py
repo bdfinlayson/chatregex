@@ -1,7 +1,7 @@
 import re
 from typing import Dict, Union
 
-from src.chatregex.pipeline.chapter_reader import ChapterReader
+from .chapter_reader import ChapterReader
 from re import Pattern
 
 

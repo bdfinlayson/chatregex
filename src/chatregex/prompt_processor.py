@@ -1,8 +1,15 @@
+import os
 import re
+
+from pipeline import book_patterns
+from pipeline.pipeline import Pipeline
 
 
 class PromptProcessor:
     exit_commands = ["nothing", "no", "don't", "stop", "quit", "exit", "goodbye", "bye", "later"]
+    file_path: str
+    book: str
+    pipeline: Pipeline
 
     def __init__(self):
         self.matching_phrases = {
@@ -15,21 +22,28 @@ class PromptProcessor:
         }
 
     def welcome(self):
-        book = input("Hi, which book are you interested in? Your options are: \n- A Study In Scarlet\n- The Secret Adversary\n- The Sign of Four\n\n")
-        if re.search(r'study|scarlet', book, flags=re.IGNORECASE):
-            book = 'a_study_in_scarlet'
-        elif re.search(r'secret|adversary', book, flags=re.IGNORECASE):
-            book = 'the_secret_adversary'
-        elif re.search(r'sign|four', book, flags=re.IGNORECASE):
-            book = 'the_sign_of_four'
+        book_input = input("Hi, which book are you interested in? Your options are: \n- A Study In Scarlet\n- The Secret Adversary\n- The Sign of Four\n\n")
+        if re.search(r'study|scarlet', book_input, flags=re.IGNORECASE):
+            self.book = 'a_study_in_scarlet'
+        elif re.search(r'secret|adversary', book_input, flags=re.IGNORECASE):
+            self.book = 'the_secret_adversary'
+        elif re.search(r'sign|four', book_input, flags=re.IGNORECASE):
+            self.book = 'the_sign_of_four'
         else:
             print("Sorry, we don't have that book. Have a great day!")
             return
 
-        book_human_readable = re.sub(r'_', ' ', book).title()
+        self.file_path = f'{os.getcwd()}/src/chatregex/books/{self.book}.txt'
+        book_human_readable = re.sub(r'_', ' ', self.book).title()
         print(f"Awesome! You are interested in {book_human_readable}")
 
         question = input("Enter a question you have: ")
+
+        self.pipeline = (
+            Pipeline()
+                .build(self.file_path, book_patterns[self.book])
+                .execute()
+        )
 
         self.handle_conversation(question)
 
@@ -66,19 +80,20 @@ class PromptProcessor:
 
     # Different intents based on prompt response
     def investigator_intent(self):
-        return input(
-            "inside self.investigator_intent() - Do you have another question? ")
+        self.print_answer('investigator')
+        return self.prompt_for_question()
 
     def perpetrator_intent(self):
-        return input(
-            "inside self.perpetrator_intent() - Do you have another question? ")
+        self.print_answer('perpetrator')
+        return self.prompt_for_question()
 
     def suspect_intent(self):
-        return input(
-            "inside self.suspect_intent() - Do you have another question? ")
+        self.print_answer('suspects')
+        return self.prompt_for_question()
 
     def crime_intent(self):
-        return input("inside self.crime_intent() - Do you have another question? ")
+        self.print_answer('crime')
+        return self.prompt_for_question()
 
     def describe_intent(self):
         return input(
@@ -87,6 +102,11 @@ class PromptProcessor:
     def when_intent(self):
         return input("inside self.when_intent() - Do you have another question? ")
 
+    def print_answer(self, subject: str):
+        print(self.pipeline.answers[subject], end='\n\n\n')
+
+    def prompt_for_question(self):
+        return input(f"Do you have another question?: ")
 
 # Creating and calling ChatRegex
 chatbot = PromptProcessor()
