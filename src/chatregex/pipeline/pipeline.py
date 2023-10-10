@@ -36,7 +36,7 @@ class Pipeline:
         return self
 
     def clean_text(self) -> "Pipeline":
-        self.text = TextParser.remove_titles(self.text)
+        self.text = TextParser.remove_honorific(self.text)
         return self
 
     def get_occurrences(self) -> "Pipeline":
@@ -56,13 +56,34 @@ class Pipeline:
         }
         return self
 
+    def build_common_surrounding_words_answer(self, match: str, occurrences: Dict[int, Dict[str, Union[int, str, list[str]]]], top_n: int = 3) -> Dict[str, int]:
+        bag_of_words = {}
+        for k, v in occurrences.items():
+            if not match == v['match']:
+                continue
+            for w in v['surrounding_words']:
+                if w in bag_of_words:
+                    bag_of_words[w] += 1
+                else:
+                    bag_of_words[w] = 1
+
+        # sort from highest to lowest
+        bag_of_words = dict(sorted(bag_of_words.items(), key=lambda item: item[1], reverse=True))
+
+        answer = f'The most common words surrounding "{match}" are: ' + ', '.join(
+            [f"{w[0]} ({w[1]} times)" for w in list(bag_of_words.items())[:top_n]])
+
+        return answer
+
     def build_answer(self, subject: str) -> str:
         o = self.occurrences[subject][self.occurrence_n]
-        return f"The {subject}'s appearance for the {self.occurrence_n}{self.cardinal_number_suffix()} time is in chapter #{o['chapter_number']} and sentence #{o['sentence_number']}. The {subject} is {o['match'].title()}."
+        common_words_answer = self.build_common_surrounding_words_answer(o['match'], self.occurrences[subject])
+        return f"The {subject}'s appearance for the {self.occurrence_n}{self.cardinal_number_suffix()} time is in chapter #{o['chapter_number']} and sentence #{o['sentence_number']}. The {subject} is {o['match'].title()}. {common_words_answer}."
 
     def build_crime_answer(self) -> str:
         o = self.occurrences['crime'][self.occurrence_n]
-        return f"The crime's appearance for the {self.occurrence_n}{self.cardinal_number_suffix()} time is in chapter #{o['chapter_number']} and sentence #{o['sentence_number']}. The crime is described as follows: {o['sentence']}."
+        common_words_answer = self.build_common_surrounding_words_answer(o['match'], self.occurrences['crime'])
+        return f"The crime's appearance for the {self.occurrence_n}{self.cardinal_number_suffix()} time is in chapter #{o['chapter_number']} and sentence #{o['sentence_number']}. The crime is described as follows: {o['sentence']}. {common_words_answer}."
 
     def build_suspects_answer(self) -> str:
         o = self.occurrences['suspects']
@@ -85,7 +106,14 @@ class Pipeline:
         chapters = f"{', '.join(chapter_numbers)}"
         sentences = f"{', '.join(sentence_numbers)}"
 
-        return f'The suspect{plural} {names} make appearance{plural} for the {self.occurrence_n}{self.cardinal_number_suffix()} time in chapter{plural} {chapters} and in sentence{plural} {sentences}, respectively.'
+        common_words_answers = []
+        for suspect in suspects:
+            cwa = self.build_common_surrounding_words_answer(suspect, self.occurrences['suspects'])
+            common_words_answers.append(cwa)
+
+        combined_common_words_answers = ". ".join(common_words_answers)
+
+        return f'The suspect{plural} {names} make appearance{plural} for the {self.occurrence_n}{self.cardinal_number_suffix()} time in chapter{plural} {chapters} and in sentence{plural} {sentences}, respectively. {combined_common_words_answers}.'
 
 
 
