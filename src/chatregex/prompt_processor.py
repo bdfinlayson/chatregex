@@ -63,47 +63,23 @@ class PromptProcessor:
             for regex_pattern in values:
                 found_match = re.match(regex_pattern, reply, flags=re.IGNORECASE)
                 if found_match and key == "investigator":
-                    return self.investigator_intent()
+                    return self.execute_intent('investigator')
                 elif found_match and key == "perpetrator":
-                    return self.perpetrator_intent()
+                    return self.execute_intent('perpetrator')
                 elif found_match and key == "suspect":
-                    return self.suspect_intent()
+                    return self.execute_intent('suspect')
                 elif found_match and key == "crime":
-                    return self.crime_intent()
-                elif found_match and key == "describe":
-                    return self.describe_intent()
-                elif found_match and key == "when":
-                    return self.when_intent()
+                    return self.execute_intent('crime')
 
         return input(
             "I did not understand you. Can you please ask your question again? ")
 
-    # Different intents based on prompt response
-    def investigator_intent(self):
-        self.print_answer('investigator')
+    def execute_intent(self, subject: str):
+        self.print_answer(subject)
         return self.prompt_for_question()
-
-    def perpetrator_intent(self):
-        self.print_answer('perpetrator')
-        return self.prompt_for_question()
-
-    def suspect_intent(self):
-        self.print_answer('suspects')
-        return self.prompt_for_question()
-
-    def crime_intent(self):
-        self.print_answer('crime')
-        return self.prompt_for_question()
-
-    def describe_intent(self):
-        return input(
-            "inside self.describe_intent() - Do you have another question? ")
-
-    def when_intent(self):
-        return input("inside self.when_intent() - Do you have another question? ")
 
     def print_answer(self, subject: str):
-        print(self.pipeline.answers[subject], end='\n\n\n')
+        print(self.pipeline.answers[subject], end='\n')
 
     def prompt_for_question(self):
         return input(f"Do you have another question?: ")
