@@ -15,10 +15,8 @@ class PromptProcessor:
         self.matching_phrases = {
             'investigator': [r'.*who.*investigator.*'],
             'perpetrator': [r'.*who.*perpetrator.*'],
-            'suspect': [r'.*when.*suspects?.*'],
-            'crime': [r'when.*crime.*'],
-            'describe': [r'[Dd]escribe when the.*'],
-            'when': [r'[Ww]hen.*the.*', r'[Tt]ell me when.*the.*']
+            'suspect': [r'.*who.*suspects?.*'],
+            'crime': [r'[when|what|describe].*crime.*'],
         }
 
     def welcome(self):
@@ -67,7 +65,7 @@ class PromptProcessor:
                 elif found_match and key == "perpetrator":
                     return self.execute_intent('perpetrator')
                 elif found_match and key == "suspect":
-                    return self.execute_intent('suspect')
+                    return self.execute_intent('suspects')
                 elif found_match and key == "crime":
                     return self.execute_intent('crime')
 
