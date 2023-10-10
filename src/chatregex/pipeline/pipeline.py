@@ -56,7 +56,7 @@ class Pipeline:
         }
         return self
 
-    def build_common_surrounding_words_answer(self, match: str, occurrences: Dict[int, Dict[str, Union[int, str, list[str]]]], top_n: int = 3) -> Dict[str, int]:
+    def build_common_surrounding_words_answer(self, match: str, occurrences: Dict[int, Dict[str, Union[int, str, list[str]]]], top_n: int = 3) -> str:
         bag_of_words = {}
         for k, v in occurrences.items():
             if not match == v['match']:
@@ -78,12 +78,14 @@ class Pipeline:
     def build_answer(self, subject: str) -> str:
         o = self.occurrences[subject][self.occurrence_n]
         common_words_answer = self.build_common_surrounding_words_answer(o['match'], self.occurrences[subject])
-        return f"The {subject}'s appearance for the {self.occurrence_n}{self.cardinal_number_suffix()} time is in chapter #{o['chapter_number']} and sentence #{o['sentence_number']}. The {subject} is {o['match'].title()}. {common_words_answer}."
+        occurrence_count = self.build_occurrence_count(subject, o['match'])
+        return f"The {subject}'s appearance for the {self.occurrence_n}{self.cardinal_number_suffix()} time is in chapter #{o['chapter_number']} and sentence #{o['sentence_number']}. The {subject} is {o['match'].title()} and appears {occurrence_count} times in the book. {common_words_answer}."
 
     def build_crime_answer(self) -> str:
         o = self.occurrences['crime'][self.occurrence_n]
         common_words_answer = self.build_common_surrounding_words_answer(o['match'], self.occurrences['crime'])
-        return f"The crime's appearance for the {self.occurrence_n}{self.cardinal_number_suffix()} time is in chapter #{o['chapter_number']} and sentence #{o['sentence_number']}. The crime is described as follows: {o['sentence']}. {common_words_answer}."
+        occurrence_count = self.build_occurrence_count('crime', o['match'])
+        return f"The crime's appearance for the {self.occurrence_n}{self.cardinal_number_suffix()} time is in chapter #{o['chapter_number']} and sentence #{o['sentence_number']}. Overall, the crime is mentioned {occurrence_count} times. The crime is described as follows: {o['sentence']}. {common_words_answer}."
 
     def build_suspects_answer(self) -> str:
         o = self.occurrences['suspects']
@@ -107,19 +109,19 @@ class Pipeline:
         sentences = f"{', '.join(sentence_numbers)}"
 
         common_words_answers = []
+        occurrence_counts = []
         for suspect in suspects:
             cwa = self.build_common_surrounding_words_answer(suspect, self.occurrences['suspects'])
             common_words_answers.append(cwa)
+            occurrence_counts.append(f"{suspect} appears {str(self.build_occurrence_count('suspects', suspect))} times")
 
         combined_common_words_answers = ". ".join(common_words_answers)
+        combined_occurrence_count_totals = " and ".join(occurrence_counts)
 
-        return f'The suspect{plural} {names} make appearance{plural} for the {self.occurrence_n}{self.cardinal_number_suffix()} time in chapter{plural} {chapters} and in sentence{plural} {sentences}, respectively. {combined_common_words_answers}.'
+        return f'The suspect{plural} {names} make appearance{plural} for the {self.occurrence_n}{self.cardinal_number_suffix()} time in chapter{plural} {chapters} and in sentence{plural} {sentences}, respectively. Overall, the suspect{plural} appear {combined_occurrence_count_totals}. {combined_common_words_answers}.'
 
-
-
-
-
-
+    def build_occurrence_count(self, subject: str, match: str) -> int:
+        return len(list(filter(lambda o: o['match'] == match, list(self.occurrences[subject].values()))))
 
     def cardinal_number_suffix(self) -> str:
         if self.occurrence_n == 1:
