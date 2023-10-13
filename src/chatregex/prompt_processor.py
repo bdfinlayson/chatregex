@@ -13,10 +13,10 @@ class PromptProcessor:
 
     def __init__(self):
         self.matching_phrases = {
-            'investigator': [r'.*who.*investigator.*'],
-            'perpetrator': [r'.*who.*perpetrator.*'],
-            'suspect': [r'.*who.*suspects?.*'],
-            'crime': [r'[when|what|describe].*crime.*'],
+            'investigator': [r'.*(who|when|what).*investigator.*'],
+            'perpetrator': [r'.*(who|when|what).*perpetrator.*'],
+            'suspect': [r'.*(who|when|what).*suspects?.*'],
+            'crime': [r'(when|what|describe).*crime.*'],
         }
 
     def welcome(self):
